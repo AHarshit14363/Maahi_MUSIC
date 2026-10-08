@@ -1,7 +1,12 @@
 FROM python:3.11-slim-bookworm
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg nodejs npm \
+    && apt-get install -y --no-install-recommends \
+        ffmpeg \
+        nodejs \
+        npm \
+        git \
+        aria2 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
