@@ -11,7 +11,7 @@ from SHUKLAMUSIC import LOGGER, app, userbot
 from SHUKLAMUSIC.core.call import SHUKLA
 from SHUKLAMUSIC.misc import sudo
 from SHUKLAMUSIC.plugins import ALL_MODULES
-from SHUKLAMUSIC.utils.database import get_banned_users, get_banned
+from SHUKLAMUSIC.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
 
@@ -21,7 +21,6 @@ async def health(request):
 
 async def start_web_server():
     web_app = web.Application()
-
     web_app.router.add_get("/", health)
     web_app.router.add_get("/health", health)
 
@@ -30,7 +29,6 @@ async def start_web_server():
 
     port = int(os.environ.get("PORT", "10000"))
     site = web.TCPSite(runner, "0.0.0.0", port)
-
     await site.start()
 
     LOGGER(__name__).info(f"WEB SERVER STARTED ON PORT {port}")
@@ -54,17 +52,14 @@ async def init():
 
     await sudo()
 
-    # Start Render health server
     web_runner = await start_web_server()
 
     try:
-        users = await get_banned()
-
+        users = await get_gbanned()
         for user_id in users:
             BANNED_USERS.add(user_id)
 
         users = await get_banned_users()
-
         for user_id in users:
             BANNED_USERS.add(user_id)
 
@@ -83,20 +78,17 @@ async def init():
     )
 
     await userbot.start()
-
     await SHUKLA.start()
 
     try:
         await SHUKLA.stream_call(
             "https://telegra.ph/file/29f784eb49d230ab62e9e.mp4"
         )
-
     except NoActiveGroupCall:
         LOGGER("SHUKLAMUSIC").error(
             "PLEASE START YOUR LOG GROUP/CHANNEL VOICECHAT."
         )
         exit()
-
     except Exception:
         pass
 
@@ -109,13 +101,8 @@ async def init():
     await idle()
 
     await web_runner.cleanup()
-
     await app.stop()
     await userbot.stop()
-
-    LOGGER("SHUKLAMUSIC").info(
-        "STOP MAAHI MUSIC BOT..."
-    )
 
 
 if __name__ == "__main__":
